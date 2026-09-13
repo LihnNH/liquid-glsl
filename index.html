@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#eef0f4" />
+  <title>Liquid Glass Slider Study</title>
+  <link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <section class="stage-wrap" aria-label="Interactive Liquid Glass study">
+      <div class="stage">
+        <canvas
+          id="glass-canvas"
+          tabindex="0"
+          aria-label="Top slider, one draggable glass pill, and one draggable glass ball."
+        ></canvas>
+        <div id="fallback" hidden></div>
+      </div>
+    </section>
+
+    <aside class="controls-panel" aria-label="Study controls">
+      <div class="controls-header">
+        <h1>Liquid Glass Lab</h1>
+        <p>Plain sliders for tuning the optical model in real time.</p>
+      </div>
+      <div id="controls-root" class="controls-root"></div>
+    </aside>
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

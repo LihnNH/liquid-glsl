@@ -1,0 +1,142 @@
+:root {
+  color-scheme: light;
+  background: #eef0f4;
+  --panel-bg: #f6f7fa;
+  --panel-border: rgba(36, 40, 48, 0.08);
+  --text: #20242b;
+  --muted: #68707f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #eef0f4;
+  color: var(--text);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: minmax(380px, 64vh) auto;
+}
+
+.stage-wrap {
+  min-height: 380px;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#glass-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  outline: none;
+  touch-action: none;
+  cursor: grab;
+}
+
+#glass-canvas:active {
+  cursor: grabbing;
+}
+
+#glass-canvas:focus-visible {
+  outline: 2px solid rgba(10, 132, 255, 0.5);
+  outline-offset: -4px;
+}
+
+.controls-panel {
+  border-top: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  padding: 18px 18px 24px;
+}
+
+.controls-header h1 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.controls-header p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.controls-root {
+  margin-top: 18px;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.control-group {
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 14px;
+}
+
+.control-group h2 {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.control-row {
+  display: grid;
+  gap: 6px;
+}
+
+.control-row + .control-row {
+  margin-top: 12px;
+}
+
+.control-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.control-label {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.control-value {
+  font: 600 12px/1.1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  color: var(--muted);
+}
+
+.control-row input[type="range"] {
+  width: 100%;
+}
+
+#fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  white-space: pre-wrap;
+  font: 500 16px/1.4 system-ui, sans-serif;
+  color: #20242b;
+  background: #eef0f4;
+}
+
+#fallback[hidden] {
+  display: none !important;
+}
