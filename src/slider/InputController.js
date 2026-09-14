@@ -67,17 +67,18 @@ export class InputController {
     const { rect, x, y } = this.#localPoint(event);
     const ball = this.state.ball;
     const free = this.state.freeGlass;
+    const scale = this.state.layoutScale || 1;
     const sliderCenter = this.#sliderCenter(rect.width, rect.height);
 
-    if (pointInCircle(x, y, ball.x, ball.y, ball.diameter)) {
+    if (pointInCircle(x, y, ball.x, ball.y, ball.diameter * scale)) {
       this.mode = 'ball';
       this.grabOffset.x = x - ball.x;
       this.grabOffset.y = y - ball.y;
-    } else if (pointInPill(x, y, free.x, free.y, free.width, free.height)) {
+    } else if (pointInPill(x, y, free.x, free.y, free.width * scale, free.height * scale)) {
       this.mode = 'free-glass';
       this.grabOffset.x = x - free.x;
       this.grabOffset.y = y - free.y;
-    } else if (pointInPill(x, y, sliderCenter.x, sliderCenter.y, this.state.slider.glassWidth, this.state.slider.glassHeight)) {
+    } else if (pointInPill(x, y, sliderCenter.x, sliderCenter.y, this.state.slider.glassWidth * scale, this.state.slider.glassHeight * scale)) {
       this.mode = 'slider';
       this.state.value = this.#valueFromX(x, rect.width);
       this.onSliderActiveChange(true);
@@ -95,17 +96,18 @@ export class InputController {
   #pointerMove = (event) => {
     if (this.pointerId !== event.pointerId || !this.mode) return;
     const { rect, x, y } = this.#localPoint(event);
+    const scale = this.state.layoutScale || 1;
 
     if (this.mode === 'free-glass') {
       const free = this.state.freeGlass;
-      const halfW = free.width * 0.5;
-      const halfH = free.height * 0.5;
+      const halfW = free.width * scale * 0.5;
+      const halfH = free.height * scale * 0.5;
       free.x = clamp(x - this.grabOffset.x, halfW, Math.max(halfW, rect.width - halfW));
       free.y = clamp(y - this.grabOffset.y, halfH, Math.max(halfH, rect.height - halfH));
       this.onChange();
     } else if (this.mode === 'ball') {
       const ball = this.state.ball;
-      const r = ball.diameter * 0.5;
+      const r = ball.diameter * scale * 0.5;
       ball.x = clamp(x - this.grabOffset.x, r, Math.max(r, rect.width - r));
       ball.y = clamp(y - this.grabOffset.y, r, Math.max(r, rect.height - r));
       this.onChange();

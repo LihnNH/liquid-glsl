@@ -2,15 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#eef0f4" />
-  <title>Liquid Glass Slider Study</title>
+  <meta name="description" content="An interactive WebGL2 liquid-glass experiment built with GLSL." />
+  <title>Liquid GLSL</title>
   <link rel="stylesheet" href="./src/styles.css" />
 </head>
 <body>
   <div class="app-shell">
-    <section class="stage-wrap" aria-label="Interactive Liquid Glass study">
+    <section class="stage-wrap" aria-label="Interactive Liquid GLSL study">
       <div class="stage">
+        <div class="fps-meter" data-level="idle" aria-label="Live rendered frames per second">
+          <output id="fps-value">--</output>
+          <span>FPS</span>
+        </div>
         <canvas
           id="glass-canvas"
           tabindex="0"
@@ -22,8 +27,8 @@
 
     <aside class="controls-panel" aria-label="Study controls">
       <div class="controls-header">
-        <h1>Liquid Glass Lab</h1>
-        <p>Plain sliders for tuning the optical model in real time.</p>
+        <h1>Liquid GLSL</h1>
+        <p>Tune the optical model in real time. Drag the glass shapes to test the refraction.</p>
       </div>
       <div id="controls-root" class="controls-root"></div>
     </aside>

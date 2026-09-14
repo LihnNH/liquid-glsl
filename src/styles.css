@@ -16,28 +16,35 @@ body {
   width: 100%;
   min-height: 100%;
   margin: 0;
+  overflow-x: hidden;
 }
 
 body {
+  min-height: 100vh;
+  min-height: 100dvh;
   background: #eef0f4;
   color: var(--text);
   font-family: Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app-shell {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-rows: minmax(380px, 64vh) auto;
 }
 
 .stage-wrap {
   min-height: 380px;
+  min-width: 0;
 }
 
 .stage {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 #glass-canvas {
@@ -46,6 +53,8 @@ body {
   display: block;
   outline: none;
   touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
   cursor: grab;
 }
 
@@ -61,8 +70,40 @@ body {
 .controls-panel {
   border-top: 1px solid var(--panel-border);
   background: var(--panel-bg);
-  padding: 18px 18px 24px;
+  padding: 18px max(18px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
 }
+
+.fps-meter {
+  position: absolute;
+  z-index: 2;
+  top: max(14px, env(safe-area-inset-top));
+  left: max(14px, env(safe-area-inset-left));
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  min-width: 74px;
+  padding: 8px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 8px 24px rgba(30, 36, 48, 0.1);
+  color: #20242b;
+  font: 700 11px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.fps-meter output {
+  min-width: 2ch;
+  font-size: 15px;
+  letter-spacing: -0.03em;
+}
+
+.fps-meter[data-level="good"] output { color: #178247; }
+.fps-meter[data-level="medium"] output { color: #9a6800; }
+.fps-meter[data-level="low"] output { color: #c7362f; }
 
 .controls-header h1 {
   margin: 0;
@@ -123,6 +164,9 @@ body {
 
 .control-row input[type="range"] {
   width: 100%;
+  min-height: 28px;
+  margin: 0;
+  accent-color: #0a84ff;
 }
 
 #fallback {
@@ -139,4 +183,64 @@ body {
 
 #fallback[hidden] {
   display: none !important;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    grid-template-rows: clamp(300px, 54svh, 460px) auto;
+  }
+
+  .stage-wrap {
+    min-height: 300px;
+  }
+
+  .controls-panel {
+    padding-top: 16px;
+  }
+
+  .controls-header h1 {
+    font-size: 20px;
+  }
+
+  .controls-header p {
+    max-width: 42rem;
+    line-height: 1.45;
+  }
+
+  .controls-root {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .control-group {
+    border-radius: 16px;
+    padding: 15px;
+  }
+
+  .control-row + .control-row {
+    margin-top: 10px;
+  }
+
+  .control-row input[type="range"] {
+    min-height: 36px;
+  }
+}
+
+@media (max-height: 560px) and (pointer: coarse) {
+  .app-shell {
+    grid-template-rows: minmax(260px, 72svh) auto;
+  }
+
+  .stage-wrap {
+    min-height: 260px;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .fps-meter {
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }

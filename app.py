@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Small local server for the Liquid Glass study.
+"""Small local server for Liquid GLSL.
 
 Starts at port 5173 and increments until a free port is found.
 """
@@ -52,7 +52,7 @@ def main() -> None:
 
     with ReusableTCPServer((HOST, port), NoCacheHandler) as httpd:
         url = f"http://localhost:{port}"
-        print(f"Liquid Glass Slider Study: {url}")
+        print(f"Liquid GLSL: {url}")
 
         threading.Timer(0.2, lambda: webbrowser.open(url)).start()
 

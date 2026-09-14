@@ -1,112 +1,65 @@
-# Liquid Glass Slider Study
+# liquid-glsl
 
-A small WebGL2 study focused on building a believable Liquid Glass slider and a couple of draggable glass shapes.
+An interactive WebGL2 experiment that recreates a liquid-glass look with GLSL refraction, dispersion, blur, rim lighting, and draggable shapes.
 
-## What is inside
+**Live demo:** [lihnh.github.io/liquid-glsl](https://lihnh.github.io/liquid-glsl/)
 
-- A horizontal slider with:
-  - inactive white thumb
-  - active Liquid Glass thumb
-  - 275 ms press / release transition
-  - slight lift / scale-up on press
-- A draggable glass pill
-- A draggable glass ball
-- A blue square and a blue rectangle for hard-edge refraction tests
-- A control panel with native HTML range sliders for the main optical parameters
+## Highlights
 
-## Run
+- Liquid-glass slider with an animated press and release state
+- Draggable glass pill and glass ball
+- Real-time optical controls for refraction, IOR, blur, dispersion, tint, rim, and lighting
+- Responsive layout and touch input for phones and tablets
+- Live FPS counter based on frames actually rendered
+- No build step and no runtime dependencies
 
-Requirements:
+## Run locally
 
-- Python 3.10+ (older versions will probably work too)
-- A browser with WebGL2 support
-
-Start the local server:
+You need Python 3 and a browser with WebGL2 support.
 
 ```bash
 python app.py
 ```
 
-The script starts at port `5173` and automatically tries `5174`, `5175`, and so on until it finds a free port. It then opens the browser automatically.
+The local server starts at `http://localhost:5173`. If that port is busy, it automatically tries the next available port and opens the page in your browser.
+
+You can also use any static file server. Opening `index.html` directly will not work in every browser because the GLSL files are loaded with `fetch`.
+
+## Using the demo
+
+- Drag the top glass thumb horizontally to change the slider value.
+- Drag the glass pill and ball around the canvas to inspect refraction over sharp edges.
+- Use the control cards below the canvas to tune the shader in real time.
+- On a focused canvas, use the arrow keys to move the slider. Hold Shift for larger steps; Home and End jump to the limits.
+
+## GitHub Pages
+
+The workflow in `.github/workflows/deploy-pages.yml` publishes the static site whenever a commit reaches `main`. It can also be started manually from the Actions tab.
+
+For the first deployment, open the repository settings on GitHub, go to **Pages**, and set **Source** to **GitHub Actions**. After that, pushes to `main` update the live demo automatically.
 
 ## Project structure
 
 ```text
-liquid-glass-slider-study/
-├── app.py
-├── index.html
-├── README.md
-└── src/
-    ├── config.js
-    ├── main.js
-    ├── styles.css
-    ├── gl/
-    │   ├── Renderer.js
-    │   └── ShaderLoader.js
-    ├── slider/
-    │   └── InputController.js
-    ├── ui/
-    │   └── ControlsPanel.js
-    └── shaders/
-        ├── common.glsl
-        ├── sdf.glsl
-        ├── surface.glsl
-        ├── refraction.glsl
-        ├── lighting.glsl
-        ├── slider.frag.glsl
-        └── vertex.glsl
+liquid-glsl/
+|-- .github/workflows/deploy-pages.yml
+|-- app.py
+|-- index.html
+|-- README.md
+`-- src/
+    |-- config.js
+    |-- main.js
+    |-- styles.css
+    |-- gl/
+    |-- shaders/
+    |-- slider/
+    `-- ui/
 ```
 
-## Notes
+## Browser support
 
-- The shader comments are in English.
-- The project now uses `app.py` instead of the old batch / Node launcher files.
-- The UI text is in English.
-- The current version avoids fake blue spectral edge paint. Blue should mainly appear when actual blue content is under or near the refractive border.
-- The slider thumb uses a dedicated wrap pass so the top rim can carry the blue fill more clearly than the generic pill renderer.
+The demo requires WebGL2 and ES modules. Current Chrome, Edge, Firefox, and Safari releases are recommended. Rendering resolution is capped more aggressively on compact touch devices to reduce GPU load while keeping the effect crisp.
 
+## License
 
-## V16 changes
-
-- Updated the default values to the latest tuned values from the UI screenshot.
-- Removed stray blue / cyan speckles by gating RGB dispersion with local chroma support.
-- Reworked slider wrap so it is limited to top/bottom rim normals instead of leaking into side crescents.
-- Added a blue-affinity gate so slider wrap only appears when the sampled track content is actually blue.
-- Increased the fully-active top wrap visibility without changing the 275 ms activation transition.
-
-
-## Update V17
-
-- The active slider thumb now uses the exact same clean glass renderer as the draggable pill again.
-- Tightened the RGB-dispersion support test so random blue specks and short blue streaks on neutral glass are much less likely to appear.
-
-
-## Update V18
-
-- Default refraction is now `64`.
-- Replaced the pill SDF finite-difference normal with a stable analytic capsule normal. This targets the tiny blue dots / short blue streak artifacts directly rather than treating them as only an RGB-dispersion problem.
-- The refraction reach cap now scales with the Refraction value, so values around 64-65 visibly increase edge carry instead of saturating too early.
-- The active slider still uses the exact same glass renderer as the draggable pill. The only slider-specific change is the blue track source position underneath the thumb, which now gives the lens enough blue content to refract and wrap at the rim.
-
-
-## Update V19
-
-- Default refraction is now `75`.
-- All three slider wrap controls now start at their UI maximums: top `2.40`, bottom `2.40`, mix `1.50`.
-- The active slider thumb still uses the exact same glass renderer as the draggable pill.
-- Increased the hidden blue fill advance under the slider thumb so higher refraction values have enough blue content to produce the same visible edge carry as the free pill.
-- Added a general anti-artifact scene sampler used by refraction and blur, not only RGB dispersion. It suppresses isolated one-pixel color jumps that were causing the persistent blue freckles/streaks.
-
-## Update V20
-
-V19 introduced an over-expensive anti-artifact sampler: each glass pixel could trigger dozens of scene samples, and the blur path multiplied that cost again. On a full-screen WebGL canvas this could stall the entire browser/GPU.
-
-V20 keeps the V19 visual/default settings (including Refraction 75 and maximum wrap controls), but restores the lightweight V18 sampling path. This removes the nested multi-sample cleanup pass that caused the freeze.
-
-## Update V21
-
-- Removed the blue freckles and thin blue bar that could appear when a strongly refracted ray barely reached the slider, square, or rectangle.
-- Restored the original strong V21 refraction curve instead of blending it with the undeformed scene, so the characteristic liquid-glass bend remains intact without the inward double silhouette or shimmer.
-- Added a lightweight radial fold/outlier detector. Two neighboring refracted rays act as continuity votes, and a component-wise median replaces only the collapsed ray that produces a one-pixel streak or freckle.
-- Kept the expensive dispersion and blur kernels on the center ray only; the two continuity votes each use one scene lookup, avoiding the V19 performance regression.
-- Applied the same localized stabilization to the active slider thumb, draggable pill, and draggable ball.
+[MIT](./LICENSE)
